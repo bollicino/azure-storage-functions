@@ -1,0 +1,20 @@
+config:
+  target: "https://azure-storage-functions-demo.azurewebsites.net"
+  phases:
+    - duration: 10
+      arrivalRate: 10
+      rampTo: 30
+      name: "Warm up the application"
+    - duration: 60
+      arrivalRate: 30
+      name: "Sustained max load"
+  defaults:
+    headers:
+      x-customers: "x-bollicino"
+      content-type: "application/json"
+      x-products: "x-load-test"
+scenarios:
+  - flow:
+    - post:
+        url: "/api/v1/file_storage"
+        body: prova

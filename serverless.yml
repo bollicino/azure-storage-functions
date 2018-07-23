@@ -1,0 +1,47 @@
+service: azure-storage-functions-${opt:stage}-${opt:region}
+
+# You can pin your service to only deploy with a specific Serverless version
+# Check out our docs for more details
+# frameworkVersion: "=X.X.X"
+
+provider:
+  name: azure
+  location: ${opt:region}
+  environment:
+    AZURE_STORAGE_CONNECTION_STRING: ${opt:storage}
+    BRANCH_NAME: ${opt:stage}
+
+plugins:
+  - serverless-azure-functions
+  - serverless-webpack
+
+package:
+  individually: true
+
+functions:
+  add-file:
+    handler: src/entrypoint.addFile
+    events:
+      - http: true
+        x-azure-settings:
+          authLevel: anonymous
+          methods:
+            - POST
+          route: v1/file_storage
+      - http: true
+        x-azure-settings:
+          direction: out
+          name: res
+  get-file:
+    handler: src/entrypoint.getFile
+    events:
+      - http: true
+        x-azure-settings:
+          authLevel: anonymous
+          methods:
+            - GET
+          route: v1/file_storage/{uuid:guid}
+      - http: true
+        x-azure-settings:
+          direction: out
+          name: res
